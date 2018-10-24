@@ -1,20 +1,16 @@
 package main
 
-import (
-	"fmt"
-)
-
 type Metrics struct {
-	utterenceCount    int
-	averageConfidence float32
+	UtteranceCount    int     `json:"utterenceCount"`
+	AverageConfidence float32 `json:"averageConfidence"`
 }
 
 type Utterance struct {
-	id         int32
-	confidence float32
+	ID         int32
+	Confidence float32
 }
 
-func main() {
+func GetMetrics() Metrics {
 	transcript := GetTranscript()
 
 	length := make(chan int)
@@ -23,26 +19,25 @@ func main() {
 	avgConfidence := make(chan float32)
 	go GetAverageConfidence(avgConfidence, transcript)
 
-	fmt.Println(Metrics{utterenceCount: <-length, averageConfidence: <-avgConfidence})
+	return Metrics{UtteranceCount: <-length, AverageConfidence: <-avgConfidence}
 }
 
-func GetLength(length chan<- int, utterences []Utterance) {
-	length <- len(utterences)
+func GetLength(length chan<- int, utterances []Utterance) {
+	length <- len(utterances)
 }
 
-func GetAverageConfidence(avgConfidence chan<- float32, utterences []Utterance) {
+func GetAverageConfidence(avgConfidence chan<- float32, utterances []Utterance) {
 	var total float32 = 0
-	for _, v := range utterences {
-		total += v.confidence
+	for _, utterance := range utterances {
+		total += utterance.Confidence
 	}
 
-	avgConfidence <- total / float32(len(utterences))
+	avgConfidence <- total / float32(len(utterances))
 }
 
 func GetTranscript() []Utterance {
-	data := []Utterance{
-		Utterance{id: 1, confidence: 1.0},
-		Utterance{id: 2, confidence: 0.75},
+	return []Utterance{
+		Utterance{ID: 1, Confidence: 1.0},
+		Utterance{ID: 2, Confidence: 0.75},
 	}
-	return data
 }

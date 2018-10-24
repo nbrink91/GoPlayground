@@ -11,19 +11,15 @@ import (
 // our main function
 func main() {
 	router := mux.NewRouter()
-	router.HandleFunc("/", GetMetrics).Methods("GET")
+	router.HandleFunc("/", GetMetricsEndpoint).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
 
-type Metrics struct {
-	UtteranceCount int16 `json:"utteranceCount,omitempty"`
-}
-
-func GetMetrics(w http.ResponseWriter, r *http.Request) {
-	metric := Metrics{UtteranceCount: 10}
+func GetMetricsEndpoint(w http.ResponseWriter, r *http.Request) {
+	metrics := GetMetrics()
 
 	w.Header().Set("Content-Type", "application/json")
 
-	json.NewEncoder(w).Encode(metric)
+	json.NewEncoder(w).Encode(metrics)
 }
