@@ -1,23 +1,27 @@
 package main
 
+type Transcript struct {
+	Utterances []Utterance `json:"utterances"`
+}
+
 type Metrics struct {
 	UtteranceCount    int     `json:"utterenceCount"`
 	AverageConfidence float32 `json:"averageConfidence"`
 }
 
 type Utterance struct {
-	ID         int32
-	Confidence float32
+	Text       string  `json:"text"`
+	Confidence float32 `json:"confidence"`
+	Start      float32 `json:"start"`
+	End        float32 `json:"end"`
 }
 
-func GetMetrics() Metrics {
-	transcript := GetTranscript()
-
+func GetMetrics(transcript Transcript) Metrics {
 	length := make(chan int)
-	go GetLength(length, transcript)
+	go GetLength(length, transcript.Utterances)
 
 	avgConfidence := make(chan float32)
-	go GetAverageConfidence(avgConfidence, transcript)
+	go GetAverageConfidence(avgConfidence, transcript.Utterances)
 
 	return Metrics{UtteranceCount: <-length, AverageConfidence: <-avgConfidence}
 }
@@ -33,11 +37,4 @@ func GetAverageConfidence(avgConfidence chan<- float32, utterances []Utterance) 
 	}
 
 	avgConfidence <- total / float32(len(utterances))
-}
-
-func GetTranscript() []Utterance {
-	return []Utterance{
-		Utterance{ID: 1, Confidence: 1.0},
-		Utterance{ID: 2, Confidence: 0.75},
-	}
 }

@@ -11,13 +11,20 @@ import (
 // our main function
 func main() {
 	router := mux.NewRouter()
-	router.HandleFunc("/", GetMetricsEndpoint).Methods("GET")
+	router.HandleFunc("/", GetMetricsEndpoint).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
 
 func GetMetricsEndpoint(w http.ResponseWriter, r *http.Request) {
-	metrics := GetMetrics()
+	var transcript Transcript
+	err := json.NewDecoder(r.Body).Decode(&transcript)
+
+	if err != nil {
+		panic(err)
+	}
+
+	metrics := GetMetrics(transcript)
 
 	w.Header().Set("Content-Type", "application/json")
 
