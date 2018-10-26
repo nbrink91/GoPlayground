@@ -5,7 +5,7 @@ type Transcript struct {
 }
 
 type Metrics struct {
-	UtteranceCount    int     `json:"utterenceCount"`
+	UtteranceCount    int     `json:"utteranceCount"`
 	AverageConfidence float32 `json:"averageConfidence"`
 }
 

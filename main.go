@@ -1,24 +1,19 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
-	"net/http"
-
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-// our main function
 func main() {
-	router := mux.NewRouter()
-	router.HandleFunc("/", GetMetricsEndpoint).Methods("POST")
-
-	log.Fatal(http.ListenAndServe(":8000", router))
+	router := gin.Default()
+	router.POST("/transcript", PostTranscript)
+	router.Run()
 }
 
-func GetMetricsEndpoint(w http.ResponseWriter, r *http.Request) {
+func PostTranscript(c *gin.Context) {
 	var transcript Transcript
-	err := json.NewDecoder(r.Body).Decode(&transcript)
+
+	err := c.ShouldBindJSON(&transcript)
 
 	if err != nil {
 		panic(err)
@@ -26,7 +21,5 @@ func GetMetricsEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	metrics := GetMetrics(transcript)
 
-	w.Header().Set("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(metrics)
+	c.JSON(200, metrics)
 }
