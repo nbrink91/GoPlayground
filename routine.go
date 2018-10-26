@@ -23,7 +23,10 @@ func GetMetrics(transcript Transcript) Metrics {
 	avgConfidence := make(chan float32)
 	go GetAverageConfidence(avgConfidence, transcript.Utterances)
 
-	return Metrics{UtteranceCount: <-length, AverageConfidence: <-avgConfidence}
+	return Metrics{
+		UtteranceCount:    <-length,
+		AverageConfidence: <-avgConfidence,
+	}
 }
 
 func GetLength(length chan<- int, utterances []Utterance) {
