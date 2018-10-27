@@ -1,4 +1,4 @@
-package main
+package metrics
 
 type Transcript struct {
 	Utterances []Utterance `json:"utterances"`
@@ -34,7 +34,7 @@ func GetLength(length chan<- int, utterances []Utterance) {
 }
 
 func GetAverageConfidence(avgConfidence chan<- float32, utterances []Utterance) {
-	var total float32 = 0
+	var total float32
 	for _, utterance := range utterances {
 		total += utterance.Confidence
 	}

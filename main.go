@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	metrics "github.com/nbrink91/GoPlayground/metrics"
 )
 
 func main() {
@@ -11,7 +12,7 @@ func main() {
 }
 
 func PostTranscript(c *gin.Context) {
-	var transcript Transcript
+	var transcript metrics.Transcript
 
 	err := c.ShouldBindJSON(&transcript)
 
@@ -19,7 +20,7 @@ func PostTranscript(c *gin.Context) {
 		panic(err)
 	}
 
-	metrics := GetMetrics(transcript)
+	metrics := metrics.GetMetrics(transcript)
 
 	c.JSON(200, metrics)
 }
